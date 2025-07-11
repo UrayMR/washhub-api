@@ -7,20 +7,17 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Response;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use App\Helpers\ApiResponse;
 use Exception;
-use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 
 class AuthController extends Controller
 {
     /**
      * Register a new user.
-     * 
-     * @param AuthRequest $request
-     * @return JsonResponse
      */
     public function register(AuthRequest $request): JsonResponse
     {
@@ -35,18 +32,24 @@ class AuthController extends Controller
                 'role'     => $validated['role'] ?? 'admin',
             ]);
 
-            return Response::success('User registered successfully.', new UserResource($user), HttpFoundationResponse::HTTP_CREATED);
+            return ApiResponse::success(
+                'User registered successfully.',
+                new UserResource($user),
+                HttpResponse::HTTP_CREATED
+            );
         } catch (Exception $e) {
             Log::error('Registration error: ' . $e->getMessage());
-            return Response::error('Failed to register user.', $e->getMessage(), HttpFoundationResponse::HTTP_INTERNAL_SERVER_ERROR);
+
+            return ApiResponse::error(
+                'Failed to register user.',
+                $e->getMessage(),
+                HttpResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
     }
 
     /**
      * Login user and return token.
-     * 
-     * @param AuthRequest $request
-     * @return JsonResponse
      */
     public function login(AuthRequest $request): JsonResponse
     {
@@ -60,18 +63,32 @@ class AuthController extends Controller
             }
 
             $user = User::where('email', $validated['email'])->firstOrFail();
+
+            // Revoke old tokens before creating new one
             $user->tokens()->delete();
             $token = $user->createToken('auth_token')->plainTextToken;
 
-            return Response::success('Login successful.', [
-                'access_token' => $token,
-                'user'         => new UserResource($user),
-            ]);
+            return ApiResponse::success(
+                'Login successful.',
+                [
+                    'access_token' => $token,
+                    'user'         => new UserResource($user),
+                ]
+            );
         } catch (ValidationException $e) {
-            return Response::error('Login failed.', $e->errors(), HttpFoundationResponse::HTTP_UNPROCESSABLE_ENTITY);
+            return ApiResponse::error(
+                'Login failed.',
+                $e->errors(),
+                HttpResponse::HTTP_UNPROCESSABLE_ENTITY
+            );
         } catch (Exception $e) {
             Log::error('Login error: ' . $e->getMessage());
-            return Response::error('Something went wrong during login.', $e->getMessage(), HttpFoundationResponse::HTTP_UNPROCESSABLE_ENTITY);
+
+            return ApiResponse::error(
+                'Something went wrong during login.',
+                $e->getMessage(),
+                HttpResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
     }
 }

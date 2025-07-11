@@ -6,8 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-
-class AuthRequest extends FormRequest
+class UserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,23 +25,40 @@ class AuthRequest extends FormRequest
     {
         $rules = [];
 
-        if ($this->isMethod('post') && $this->routeIs('register')) {
+        if ($this->isMethod('post')) {
             $rules = [
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|string|min:6|confirmed',
                 'password_confirmation' => 'required|string|min:6',
-                'role' => 'in:admin,super-admin',
+                'role' => 'required|in:admin,super-admin',
             ];
         }
 
-        if ($this->isMethod('post') && $this->routeIs('login')) {
+        if ($this->isMethod('put') || $this->isMethod('patch')) {
+            $userId = $this->route('user')?->id ?? 'NULL';
+
             $rules = [
-                'email' => 'required|email',
-                'password' => 'required|string',
+                'name' => 'sometimes|string|max:255',
+                'email' => "sometimes|email|unique:users,email,{$userId}",
+                'password' => 'sometimes|string|min:6|confirmed',
+                'password_confirmation' => 'sometimes|string|min:6',
+                'role' => 'sometimes|in:admin,super-admin',
             ];
         }
 
         return $rules;
+    }
+
+    /**
+     * Custom failed validation response
+     */
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'status' => false,
+            'message' => 'The given data was invalid.',
+            'errors' => $validator->errors(),
+        ], 422));
     }
 }

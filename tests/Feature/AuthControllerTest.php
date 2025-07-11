@@ -26,6 +26,10 @@ class AuthControllerTest extends TestCase
         $response = $this->postJson('/api/register', $payload);
 
         $response->assertStatus(422)
+            ->assertJson([
+                'status' => false,
+                'message' => 'Validation failed.',
+            ])
             ->assertJsonValidationErrors(['password']);
     }
 
@@ -45,7 +49,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(422)
             ->assertJson([
                 'status' => false,
-                'message' => 'The given data was invalid.',
+                'message' => 'Validation failed.',
             ])
             ->assertJsonValidationErrors(['password']);
     }
