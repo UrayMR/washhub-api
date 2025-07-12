@@ -18,7 +18,7 @@ class UserPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, User $model): bool
+    public function view(User $user): bool
     {
         return in_array($user->role, ['admin', 'super-admin']);
     }
@@ -50,7 +50,7 @@ class UserPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, User $model): bool
+    public function restore(User $user): bool
     {
         return $user->role === 'super-admin';
     }
@@ -58,7 +58,7 @@ class UserPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, User $model): bool
+    public function forceDelete(User $user): bool
     {
         return $user->role === 'super-admin';
     }

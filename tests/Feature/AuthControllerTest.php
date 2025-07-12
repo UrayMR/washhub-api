@@ -6,14 +6,12 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
-use PHPUnit\Framework\Attributes\Test;
 
 class AuthControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    #[Test]
-    public function registration_fails_when_password_confirmation_is_missing()
+    public function test_registration_fails_when_password_confirmation_is_missing()
     {
         $payload = [
             'name' => 'No Confirm',
@@ -33,8 +31,7 @@ class AuthControllerTest extends TestCase
             ->assertJsonValidationErrors(['password']);
     }
 
-    #[Test]
-    public function registration_fails_when_password_confirmation_does_not_match()
+    public function test_registration_fails_when_password_confirmation_does_not_match()
     {
         $payload = [
             'name' => 'Mismatch User',
@@ -54,8 +51,7 @@ class AuthControllerTest extends TestCase
             ->assertJsonValidationErrors(['password']);
     }
 
-    #[Test]
-    public function user_can_register_successfully()
+    public function test_user_can_register_successfully()
     {
         $payload = [
             'name' => 'Test User',
@@ -78,8 +74,7 @@ class AuthControllerTest extends TestCase
         ]);
     }
 
-    #[Test]
-    public function user_can_login_successfully()
+    public function test_user_can_login_successfully()
     {
         $user = User::factory()->create([
             'email' => 'test@example.com',
@@ -110,8 +105,7 @@ class AuthControllerTest extends TestCase
             ]);
     }
 
-    #[Test]
-    public function login_fails_with_invalid_credentials()
+    public function test_login_fails_with_invalid_credentials()
     {
         $user = User::factory()->create([
             'email' => 'wrong@example.com',

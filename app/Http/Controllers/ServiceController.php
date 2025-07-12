@@ -21,7 +21,7 @@ class ServiceController extends Controller
 
         $services = ServiceResource::collection(Service::all());
 
-        return ApiResponse::success('services retrieved successfully.', $services, HttpResponse::HTTP_OK);
+        return ApiResponse::success('Services retrieved successfully.', $services, HttpResponse::HTTP_OK);
     }
 
     /**
@@ -51,7 +51,7 @@ class ServiceController extends Controller
     {
         Gate::authorize('view', $service);
 
-        return ApiResponse::success('service retrieved successfully.', new ServiceResource($service), HttpResponse::HTTP_OK);
+        return ApiResponse::success('Service retrieved successfully.', new ServiceResource($service), HttpResponse::HTTP_OK);
     }
 
     /**
@@ -71,7 +71,7 @@ class ServiceController extends Controller
 
         $service->update($request->validated());
 
-        return ApiResponse::success('service updated.', new ServiceResource($service), HttpResponse::HTTP_OK);
+        return ApiResponse::success('Service updated.', new ServiceResource($service), HttpResponse::HTTP_OK);
     }
 
     /**
@@ -89,6 +89,6 @@ class ServiceController extends Controller
 
         $service->delete();
 
-        return ApiResponse::success('service deleted.', $serviceDeletedData, HttpResponse::HTTP_OK);
+        return ApiResponse::success('Service deleted.', $serviceDeletedData, HttpResponse::HTTP_OK);
     }
 }

@@ -5,15 +5,57 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use PHPUnit\Framework\Attributes\Test;
 
 
 class UserControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    #[Test]
-    public function super_admin_can_create_user()
+    public function test_index_user_as_super_admin()
+    {
+        /** @var \App\Models\User $superAdmin */
+        $superAdmin = User::factory()->create(['role' => 'super-admin']);
+        $this->actingAs($superAdmin, 'sanctum');
+
+        $adminDatas = User::factory(5)->create(['role' => 'admin']);
+
+        $response = $this->getJson('/api/users');
+
+        $response->assertSuccessful();
+
+        foreach ($adminDatas as $admin) {
+            $response->assertJsonFragment([
+                'id' => $admin->id,
+                'name' => $admin->name,
+                'email' => $admin->email,
+                'role' => 'admin',
+                'created_at' => $admin->created_at,
+            ]);
+        }
+    }
+
+    public function test_show_user_as_admin()
+    {
+        /** @var \App\Models\User $admin */
+        $admin = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($admin, 'sanctum');
+
+        $superAdminData = User::factory()->create(['role' => 'super-admin']);
+
+        $response = $this->getJson('/api/users/' . $superAdminData->id);
+
+        $response->assertSuccessful()->assertJsonFragment(
+            [
+                'id' => $superAdminData->id,
+                'name' => $superAdminData->name,
+                'email' => $superAdminData->email,
+                'role' => 'super-admin',
+                'created_at' => $superAdminData->created_at,
+            ]
+        );
+    }
+
+    public function test_super_admin_can_create_user()
     {
         /** @var \App\Models\User $superAdmin */
         $superAdmin = User::factory()->create(['role' => 'super-admin']);
@@ -33,11 +75,21 @@ class UserControllerTest extends TestCase
             ->assertJson([
                 'status' => true,
                 'message' => 'User created.',
+                'data' => [
+                    'name' => 'Admin Baru',
+                    'email' => 'adminbaru@example.com',
+                    'role' => 'admin',
+                ]
             ]);
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'adminbaru@example.com',
+            'role' => 'admin',
+        ]);
     }
 
-    #[Test]
-    public function admin_cannot_create_user()
+
+    public function test_admin_cannot_create_user()
     {
         /** @var \App\Models\User $admin */
         $admin = User::factory()->create(['role' => 'admin']);
@@ -60,8 +112,7 @@ class UserControllerTest extends TestCase
             ]);
     }
 
-    #[Test]
-    public function admin_cannot_update_or_delete_user()
+    public function test_admin_cannot_update_or_delete_user()
     {
         /** @var \App\Models\User $admin */
         $admin = User::factory()->create(['role' => 'admin']);
@@ -83,8 +134,7 @@ class UserControllerTest extends TestCase
         $delete->assertForbidden();
     }
 
-    #[Test]
-    public function super_admin_can_update_and_delete_user()
+    public function test_super_admin_can_update_and_delete_user()
     {
         /** @var \App\Models\User $superAdmin */
         $superAdmin = User::factory()->create(['role' => 'super-admin']);
@@ -103,6 +153,10 @@ class UserControllerTest extends TestCase
                 'status' => true,
                 'message' => 'User updated.',
             ]);
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'Updated Name',
+        ]);
 
         $delete = $this->deleteJson("/api/users/{$target->id}");
         $delete->assertOk()
