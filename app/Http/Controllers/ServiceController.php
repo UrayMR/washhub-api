@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ApiResponse;
+use App\Http\Requests\ServiceRequest;
+use App\Http\Resources\ServiceResource;
 use App\Models\Service;
-use App\Http\Requests\StoreServiceRequest;
-use App\Http\Requests\UpdateServiceRequest;
+use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
+
 
 class ServiceController extends Controller
 {
@@ -13,7 +17,11 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        //
+        Gate::authorize('viewAny', Service::class);
+
+        $services = ServiceResource::collection(Service::all());
+
+        return ApiResponse::success('services retrieved successfully.', $services, HttpResponse::HTTP_OK);
     }
 
     /**
@@ -27,9 +35,13 @@ class ServiceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreServiceRequest $request)
+    public function store(ServiceRequest $request)
     {
-        //
+        Gate::authorize('create', Service::class);
+
+        $service = Service::create($request->validated());
+
+        return ApiResponse::success('Service created.', new ServiceResource($service), HttpResponse::HTTP_CREATED);
     }
 
     /**
@@ -37,7 +49,9 @@ class ServiceController extends Controller
      */
     public function show(Service $service)
     {
-        //
+        Gate::authorize('view', $service);
+
+        return ApiResponse::success('service retrieved successfully.', new ServiceResource($service), HttpResponse::HTTP_OK);
     }
 
     /**
@@ -51,9 +65,13 @@ class ServiceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateServiceRequest $request, Service $service)
+    public function update(ServiceRequest $request, Service $service)
     {
-        //
+        Gate::authorize('update', $service);
+
+        $service->update($request->validated());
+
+        return ApiResponse::success('service updated.', new ServiceResource($service), HttpResponse::HTTP_OK);
     }
 
     /**
@@ -61,6 +79,16 @@ class ServiceController extends Controller
      */
     public function destroy(Service $service)
     {
-        //
+        Gate::authorize('delete', $service);
+
+        $serviceDeletedData = [
+            'id' => $service->id,
+            'name' => $service->name,
+            'role' => $service->role,
+        ];
+
+        $service->delete();
+
+        return ApiResponse::success('service deleted.', $serviceDeletedData, HttpResponse::HTTP_OK);
     }
 }

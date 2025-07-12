@@ -5,42 +5,50 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Gate;
 use App\Helpers\ApiResponse;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class UserController extends Controller
 {
-    use AuthorizesRequests;
-
     public function index()
     {
-        $this->authorize('viewAny', User::class);
+        Gate::authorize('viewAny', User::class);
 
         $users = UserResource::collection(User::all());
 
         return ApiResponse::success('Users retrieved successfully.', $users, HttpResponse::HTTP_OK);
     }
 
-    public function show(User $user)
+    public function create()
     {
-        $this->authorize('view', $user);
-
-        return ApiResponse::success('User retrieved successfully.', new UserResource($user), HttpResponse::HTTP_OK);
+        //
     }
 
     public function store(UserRequest $request)
     {
-        $this->authorize('create', User::class);
+        Gate::authorize('create', User::class);
 
         $user = User::create($request->validated());
 
         return ApiResponse::success('User created.', new UserResource($user), HttpResponse::HTTP_CREATED);
     }
 
+    public function show(User $user)
+    {
+        Gate::authorize('view', $user);
+
+        return ApiResponse::success('User retrieved successfully.', new UserResource($user), HttpResponse::HTTP_OK);
+    }
+
+    public function edit(User $user)
+    {
+        //
+    }
+
     public function update(UserRequest $request, User $user)
     {
-        $this->authorize('update', $user);
+        Gate::authorize('update', $user);
 
         $user->update($request->validated());
 
@@ -49,7 +57,7 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        $this->authorize('delete', $user);
+        Gate::authorize('delete', $user);
 
         $userDeletedData = [
             'id' => $user->id,

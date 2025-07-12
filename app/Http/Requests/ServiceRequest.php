@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserRequest extends FormRequest
+class ServiceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,20 +26,20 @@ class UserRequest extends FormRequest
         if ($this->isMethod('post')) {
             $rules = [
                 'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users,email',
-                'password' => 'required|string|min:6|confirmed',
-                'role' => 'required|in:admin,super-admin',
+                'description' => 'nullable|string',
+                'price' => 'required|decimal:2',
+                'unit' => 'required|in:kg,pcs',
+                'status' => 'required|in:active,inactive',
             ];
         }
 
         if ($this->isMethod('put') || $this->isMethod('patch')) {
-            $userId = is_object($this->route('user')) ? $this->route('user')->id : $this->route('user');
-
             $rules = [
                 'name' => 'sometimes|string|max:255',
-                'email' => "sometimes|email|unique:users,email,{$userId}",
-                'password' => 'sometimes|string|min:6|confirmed',
-                'role' => 'sometimes|in:admin,super-admin',
+                'description' => 'sometimes|nullable|string',
+                'price' => 'sometimes|decimal:2',
+                'unit' => 'sometimes|in:kg,pcs',
+                'status' => 'sometimes|in:active,inactive',
             ];
         }
 
