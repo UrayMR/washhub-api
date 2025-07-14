@@ -92,7 +92,7 @@ class CustomerController extends Controller
         $customer->update($request->validated());
 
         return ApiResponse::success(
-            'Customer updated successfully.',
+            'Customer updated.',
             new CustomerResource($customer),
             HttpResponse::HTTP_OK
         );
@@ -115,7 +115,7 @@ class CustomerController extends Controller
         $customer->delete();
 
         return ApiResponse::success(
-            'Customer deleted successfully.',
+            'Customer deleted.',
             $customerDeletedData,
             HttpResponse::HTTP_OK
         );

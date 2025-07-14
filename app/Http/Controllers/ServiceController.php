@@ -100,7 +100,9 @@ class ServiceController extends Controller
         $serviceDeletedData = [
             'id' => $service->id,
             'name' => $service->name,
-            'role' => $service->role,
+            'price' => $service->price,
+            'unit' => $service->unit,
+            'status' => $service->status,
         ];
 
         $service->delete();

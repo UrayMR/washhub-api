@@ -160,6 +160,14 @@ class ServiceControllerTest extends TestCase
                 'message' => 'Service deleted.',
             ]);
 
+        $delete->assertJsonFragment([
+            'id' => $service->id,
+            'name' => 'Cuci Basah',
+            'price' => '18000.00',
+            'unit' => $service->unit,
+            'status' => $service->status,
+        ]);
+
         $this->assertDatabaseMissing('services', [
             'id' => $service->id,
         ]);
