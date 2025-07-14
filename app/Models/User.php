@@ -16,6 +16,9 @@ class User extends Authenticatable implements HasApiTokensContract
     public $incrementing = false;
     protected $keyType = 'string';
 
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_SUPER_ADMIN = 'super-admin';
+
     /**
      * The attributes that are mass assignable.
      *

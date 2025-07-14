@@ -13,7 +13,7 @@ class ServicePolicy
      */
     public function viewAny(User $user): bool
     {
-        return in_array($user->role, ['admin', 'super-admin']);
+        return in_array($user->role, [User::ROLE_ADMIN, User::ROLE_SUPER_ADMIN]);
     }
 
     /**
@@ -21,7 +21,7 @@ class ServicePolicy
      */
     public function view(User $user, Service $service): bool
     {
-        return in_array($user->role, ['admin', 'super-admin']);
+        return in_array($user->role, [User::ROLE_ADMIN, User::ROLE_SUPER_ADMIN]);
     }
 
     /**
@@ -29,7 +29,7 @@ class ServicePolicy
      */
     public function create(User $user): bool
     {
-        return $user->role === 'super-admin';
+        return $user->role ===  User::ROLE_SUPER_ADMIN;
     }
 
     /**
@@ -37,7 +37,7 @@ class ServicePolicy
      */
     public function update(User $user, Service $service): bool
     {
-        return $user->role === 'super-admin';
+        return $user->role ===  User::ROLE_SUPER_ADMIN;
     }
 
     /**
@@ -45,7 +45,7 @@ class ServicePolicy
      */
     public function delete(User $user, Service $service): bool
     {
-        return $user->role === 'super-admin';
+        return $user->role ===  User::ROLE_SUPER_ADMIN;
     }
 
     /**
@@ -53,7 +53,7 @@ class ServicePolicy
      */
     public function restore(User $user, Service $service): bool
     {
-        return $user->role === 'super-admin';
+        return $user->role ===  User::ROLE_SUPER_ADMIN;
     }
 
     /**
@@ -61,6 +61,6 @@ class ServicePolicy
      */
     public function forceDelete(User $user, Service $service): bool
     {
-        return $user->role === 'super-admin';
+        return $user->role ===  User::ROLE_SUPER_ADMIN;
     }
 }

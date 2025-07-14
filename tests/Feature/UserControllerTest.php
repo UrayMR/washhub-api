@@ -34,23 +34,23 @@ class UserControllerTest extends TestCase
         }
     }
 
-    public function test_show_user_as_admin()
+    public function test_show_user_as_super_admin()
     {
-        /** @var \App\Models\User $admin */
-        $admin = User::factory()->create(['role' => 'admin']);
-        $this->actingAs($admin, 'sanctum');
+        /** @var \App\Models\User $superAdmin */
+        $superAdmin = User::factory()->create(['role' => 'super-admin']);
+        $this->actingAs($superAdmin, 'sanctum');
 
-        $superAdminData = User::factory()->create(['role' => 'super-admin']);
+        $adminData = User::factory()->create(['role' => 'admin']);
 
-        $response = $this->getJson('/api/users/' . $superAdminData->id);
+        $response = $this->getJson('/api/users/' . $adminData->id);
 
         $response->assertSuccessful()->assertJsonFragment(
             [
-                'id' => $superAdminData->id,
-                'name' => $superAdminData->name,
-                'email' => $superAdminData->email,
-                'role' => 'super-admin',
-                'created_at' => $superAdminData->created_at,
+                'id' => $adminData->id,
+                'name' => $adminData->name,
+                'email' => $adminData->email,
+                'role' => 'admin',
+                'created_at' => $adminData->created_at,
             ]
         );
     }

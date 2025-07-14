@@ -21,14 +21,24 @@ class CustomerRequest extends FormRequest
      */
     public function rules(): array
     {
+        $rules = [];
+
         if ($this->isMethod('post')) {
-            return [
+            $rules = [
                 'name' => 'required|string|max:255',
-                'phone_number' => 'required|unique:customers,phone_number',
+                'phone_number' => 'required|string|unique:customers,phone_number',
                 'address' => 'nullable|string|min:6',
             ];
         }
 
-        return [];
+        if ($this->isMethod('put') || $this->isMethod('patch')) {
+            $rules = [
+                'name' => 'sometimes|string|max:255',
+                'phone_number' => 'sometimes|string|unique:customers,phone_number',
+                'address' => 'sometimes|nullable|string|min:6',
+            ];
+        }
+
+        return $rules;
     }
 }

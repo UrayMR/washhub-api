@@ -17,7 +17,11 @@ class UserController extends Controller
 
         $users = UserResource::collection(User::all());
 
-        return ApiResponse::success('Users retrieved successfully.', $users, HttpResponse::HTTP_OK);
+        return ApiResponse::success(
+            'Users retrieved successfully.',
+            $users,
+            HttpResponse::HTTP_OK
+        );
     }
 
     public function create()
@@ -31,14 +35,22 @@ class UserController extends Controller
 
         $user = User::create($request->validated());
 
-        return ApiResponse::success('User created.', new UserResource($user), HttpResponse::HTTP_CREATED);
+        return ApiResponse::success(
+            'User created.',
+            new UserResource($user),
+            HttpResponse::HTTP_CREATED
+        );
     }
 
     public function show(User $user)
     {
         Gate::authorize('view', $user);
 
-        return ApiResponse::success('User retrieved successfully.', new UserResource($user), HttpResponse::HTTP_OK);
+        return ApiResponse::success(
+            'User retrieved successfully.',
+            new UserResource($user),
+            HttpResponse::HTTP_OK
+        );
     }
 
     public function edit(User $user)
@@ -52,7 +64,11 @@ class UserController extends Controller
 
         $user->update($request->validated());
 
-        return ApiResponse::success('User updated.', new UserResource($user), HttpResponse::HTTP_OK);
+        return ApiResponse::success(
+            'User updated.',
+            new UserResource($user),
+            HttpResponse::HTTP_OK
+        );
     }
 
     public function destroy(User $user)
@@ -67,6 +83,10 @@ class UserController extends Controller
 
         $user->delete();
 
-        return ApiResponse::success('User deleted.', $userDeletedData, HttpResponse::HTTP_OK);
+        return ApiResponse::success(
+            'User deleted.',
+            $userDeletedData,
+            HttpResponse::HTTP_OK
+        );
     }
 }

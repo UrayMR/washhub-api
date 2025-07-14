@@ -13,7 +13,7 @@ class CustomerPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return in_array($user->role, [User::ROLE_ADMIN, User::ROLE_SUPER_ADMIN]);
     }
 
     /**
@@ -21,7 +21,8 @@ class CustomerPolicy
      */
     public function view(User $user, Customer $customer): bool
     {
-        return false;
+        return $user->role === User::ROLE_SUPER_ADMIN
+            || $customer->orders()->where('user_id', $user->id)->exists();
     }
 
     /**
@@ -29,7 +30,7 @@ class CustomerPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return in_array($user->role, [User::ROLE_ADMIN, User::ROLE_SUPER_ADMIN]);
     }
 
     /**
@@ -37,7 +38,8 @@ class CustomerPolicy
      */
     public function update(User $user, Customer $customer): bool
     {
-        return false;
+        return $user->role === User::ROLE_SUPER_ADMIN
+            || $customer->orders()->where('user_id', $user->id)->exists();
     }
 
     /**
@@ -45,7 +47,8 @@ class CustomerPolicy
      */
     public function delete(User $user, Customer $customer): bool
     {
-        return false;
+        return $user->role === User::ROLE_SUPER_ADMIN
+            || $customer->orders()->where('user_id', $user->id)->exists();
     }
 
     /**
@@ -53,7 +56,7 @@ class CustomerPolicy
      */
     public function restore(User $user, Customer $customer): bool
     {
-        return false;
+        return $user->role ===  User::ROLE_SUPER_ADMIN;
     }
 
     /**
@@ -61,6 +64,6 @@ class CustomerPolicy
      */
     public function forceDelete(User $user, Customer $customer): bool
     {
-        return false;
+        return $user->role ===  User::ROLE_SUPER_ADMIN;
     }
 }

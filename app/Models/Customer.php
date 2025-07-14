@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Customer extends Model
 {
-    /** @use HasFactory<\Database\Factories\CustomerFactory> */
     use HasFactory, HasUuids;
 
     public $incrementing = false;
@@ -20,5 +19,8 @@ class Customer extends Model
         'address',
     ];
 
-
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

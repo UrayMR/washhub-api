@@ -21,7 +21,11 @@ class ServiceController extends Controller
 
         $services = ServiceResource::collection(Service::all());
 
-        return ApiResponse::success('Services retrieved successfully.', $services, HttpResponse::HTTP_OK);
+        return ApiResponse::success(
+            'Services retrieved successfully.',
+            $services,
+            HttpResponse::HTTP_OK
+        );
     }
 
     /**
@@ -41,7 +45,11 @@ class ServiceController extends Controller
 
         $service = Service::create($request->validated());
 
-        return ApiResponse::success('Service created.', new ServiceResource($service), HttpResponse::HTTP_CREATED);
+        return ApiResponse::success(
+            'Service created.',
+            new ServiceResource($service),
+            HttpResponse::HTTP_CREATED
+        );
     }
 
     /**
@@ -51,7 +59,11 @@ class ServiceController extends Controller
     {
         Gate::authorize('view', $service);
 
-        return ApiResponse::success('Service retrieved successfully.', new ServiceResource($service), HttpResponse::HTTP_OK);
+        return ApiResponse::success(
+            'Service retrieved successfully.',
+            new ServiceResource($service),
+            HttpResponse::HTTP_OK
+        );
     }
 
     /**
@@ -71,7 +83,11 @@ class ServiceController extends Controller
 
         $service->update($request->validated());
 
-        return ApiResponse::success('Service updated.', new ServiceResource($service), HttpResponse::HTTP_OK);
+        return ApiResponse::success(
+            'Service updated.',
+            new ServiceResource($service),
+            HttpResponse::HTTP_OK
+        );
     }
 
     /**
@@ -89,6 +105,10 @@ class ServiceController extends Controller
 
         $service->delete();
 
-        return ApiResponse::success('Service deleted.', $serviceDeletedData, HttpResponse::HTTP_OK);
+        return ApiResponse::success(
+            'Service deleted.',
+            $serviceDeletedData,
+            HttpResponse::HTTP_OK
+        );
     }
 }
