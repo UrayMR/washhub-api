@@ -2,14 +2,33 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    /** @use HasFactory<\Database\Factories\OrderFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'order_number',
+        'service_id',
+        'customer_id',
+        'user_id',
+        'order_status',
+        'total_price',
+        'notes',
+        'pickup_date',
+    ];
+
+    protected $casts = [
+        'pickup_date' => 'date',
+        'total_price' => 'decimal:2',
+    ];
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
+    }
 
     public function customer()
     {
@@ -19,5 +38,15 @@ class Order extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class);
     }
 }

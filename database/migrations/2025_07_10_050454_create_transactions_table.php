@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
-            $table->decimal('amount', 10, 2);
-            $table->enum('payment_method', ['tunai', 'transfer', 'qris'])->default('tunai');
+            $table->string('transaction_number')->unique();
+            $table->foreignId('invoice_id')->constrained('orders')->onDelete('cascade');
+            $table->enum('payment_method', ['cash', 'transfer', 'qris'])->default('cash');
+            $table->decimal('paid_amount', 10, 2);
+            $table->timestamp('paid_at')->nullable();
+            $table->string('reference_number')->nullable();
             $table->timestamps();
         });
     }
