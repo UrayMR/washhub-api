@@ -11,7 +11,6 @@ class Order extends Model
 
     protected $fillable = [
         'order_number',
-        'service_id',
         'customer_id',
         'user_id',
         'order_status',
@@ -24,11 +23,6 @@ class Order extends Model
         'pickup_date' => 'date',
         'total_price' => 'decimal:2',
     ];
-
-    public function service()
-    {
-        return $this->belongsTo(Service::class);
-    }
 
     public function customer()
     {

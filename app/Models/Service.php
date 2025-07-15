@@ -16,4 +16,14 @@ class Service extends Model
         'unit',
         'status',
     ];
+
+    protected $casts = [
+        'price' => 'decimal:2',
+    ];
+
+
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
 }
