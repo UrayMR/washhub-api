@@ -13,5 +13,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(ExceptionHandler::class, Handler::class);
     }
 
-    public function boot(): void {}
+    public function boot(): void
+    {
+        //
+    }
 }
