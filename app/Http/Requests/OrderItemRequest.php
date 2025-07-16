@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ServiceRequest extends FormRequest
+class OrderItemRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,21 +25,22 @@ class ServiceRequest extends FormRequest
 
         if ($this->isMethod('post')) {
             $rules = [
+                'order_id' => 'required|exists:orders,id',
+                'service_id' => 'required|exists:services,id',
                 'name' => 'required|string|max:255',
-                'description' => 'nullable|string',
+                'quantity' => 'required|numeric|min:0',
                 'price' => 'required|decimal:2|min:0',
-                'unit' => 'required|in:kg,pcs',
-                'status' => 'required|in:active,inactive',
             ];
         }
 
         if ($this->isMethod('put') || $this->isMethod('patch')) {
             $rules = [
+                // Does order id need to be on this put or patch?
+                'order_id' => 'sometimes|exists:orders,id',
+                'service_id' => 'sometimes|exists:services,id',
                 'name' => 'sometimes|string|max:255',
-                'description' => 'sometimes|nullable|string',
-                'price' => 'sometimes|decimal:2',
-                'unit' => 'sometimes|in:kg,pcs',
-                'status' => 'sometimes|in:active,inactive',
+                'quantity' => 'sometimes|numeric|min:0',
+                'price' => 'sometimes|decimal:2|min:0',
             ];
         }
 

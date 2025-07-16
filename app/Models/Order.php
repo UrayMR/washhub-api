@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,6 +21,7 @@ class Order extends Model
     ];
 
     protected $casts = [
+        'order_status' => OrderStatus::class,
         'pickup_date' => 'date',
         'total_price' => 'decimal:2',
     ];
