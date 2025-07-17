@@ -9,17 +9,19 @@ trait AutoGenerateNumber
     public static function bootAutoGenerateCode(): void
     {
         static::creating(function ($model) {
-            // Takes prefix and column target from model variable definitions
+            // Takes number prefix and field from model that has been defined
             $prefix = $model->number_prefix ?? 'ORD';
-            $field = $model->number_field ?? 'order_number';
+            $field  = $model->number_field  ?? 'order_number';
 
-            $date = now()->format('Ymd');
-            $count = static::whereDate('created_at', today())->count() + 1;
+            $now = now();
+            $date = $now->format('Ymd');
+            $count = static::whereDate('created_at', $now->toDateString())->count() + 1;
 
-            $increment_digit = 4;
-            $increment_number = str_pad($count, $increment_digit, '0', STR_PAD_LEFT);
+            // Set increment digits or can be defined on models 
+            $digits = $model->number_digits ?? 5;
+            $increment = str_pad($count, $digits, '0', STR_PAD_LEFT);
 
-            $model->{$field} = "{$prefix}-{$date}-{$increment_number}";
+            $model->{$field} = "{$prefix}-{$date}-{$increment}";
         });
     }
 }
