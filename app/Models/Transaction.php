@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\AutoGenerateNumber;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
-    use HasFactory;
+    use HasFactory, AutoGenerateNumber;
 
     protected $fillable = [
-        'transaction_number',
+        // Auto generated transaction number
+        // 'transaction_number',
         'invoice_id',
         'payment_method',
         'paid_amount',
@@ -22,6 +24,9 @@ class Transaction extends Model
         'paid_amount' => 'decimal:2',
         'paid_at' => 'datetime'
     ];
+
+    protected string $code_prefix = 'TRX';
+    protected string $code_field = 'transaction_number';
 
     public function invoice()
     {

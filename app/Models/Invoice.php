@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\AutoGenerateNumber;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Invoice extends Model
 {
-    use HasFactory;
+    use HasFactory, AutoGenerateNumber;
 
     protected $fillable = [
-        'invoice_number',
+        // Auto generated Invoice Number
+        // 'invoice_number',
         'order_id',
         'amount',
         'issued_at',
@@ -21,6 +23,9 @@ class Invoice extends Model
         'amount' => 'decimal:2',
         'issued_at' => 'date'
     ];
+
+    protected string $code_prefix = 'INV';
+    protected string $code_field = 'invoice_number';
 
     public function order()
     {

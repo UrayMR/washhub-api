@@ -3,15 +3,17 @@
 namespace App\Models;
 
 use App\Enums\OrderStatus;
+use App\Traits\AutoGenerateNumber;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    use HasFactory;
+    use HasFactory, AutoGenerateNumber;
 
     protected $fillable = [
-        'order_number',
+        // Auto Generated order_number
+        // 'order_number', 
         'customer_id',
         'user_id',
         'order_status',
@@ -25,6 +27,9 @@ class Order extends Model
         'pickup_date' => 'date',
         'total_price' => 'decimal:2',
     ];
+
+    protected string $code_prefix = 'ORD';
+    protected string $code_field = 'order_number';
 
     public function customer()
     {
