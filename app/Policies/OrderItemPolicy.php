@@ -13,7 +13,7 @@ class OrderItemPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return in_array($user->role, [User::ROLE_ADMIN, User::ROLE_SUPER_ADMIN]);
     }
 
     /**
@@ -21,7 +21,8 @@ class OrderItemPolicy
      */
     public function view(User $user, OrderItem $orderItem): bool
     {
-        return false;
+        return $user->role === User::ROLE_SUPER_ADMIN
+            || $orderItem->order && $orderItem->order->user_id === $user->id;
     }
 
     /**
@@ -29,7 +30,7 @@ class OrderItemPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return in_array($user->role, [User::ROLE_ADMIN, User::ROLE_SUPER_ADMIN]);
     }
 
     /**
@@ -37,7 +38,8 @@ class OrderItemPolicy
      */
     public function update(User $user, OrderItem $orderItem): bool
     {
-        return false;
+        return $user->role === User::ROLE_SUPER_ADMIN
+            || $orderItem->order && $orderItem->order->user_id === $user->id;
     }
 
     /**
@@ -45,7 +47,8 @@ class OrderItemPolicy
      */
     public function delete(User $user, OrderItem $orderItem): bool
     {
-        return false;
+        return $user->role === User::ROLE_SUPER_ADMIN
+            || $orderItem->order->user_id === $user->id;
     }
 
     /**
@@ -53,7 +56,7 @@ class OrderItemPolicy
      */
     public function restore(User $user, OrderItem $orderItem): bool
     {
-        return false;
+        return $user->role ===  User::ROLE_SUPER_ADMIN;
     }
 
     /**
@@ -61,6 +64,6 @@ class OrderItemPolicy
      */
     public function forceDelete(User $user, OrderItem $orderItem): bool
     {
-        return false;
+        return $user->role ===  User::ROLE_SUPER_ADMIN;
     }
 }
