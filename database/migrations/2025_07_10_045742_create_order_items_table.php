@@ -17,8 +17,8 @@ return new class extends Migration
             $table->foreignId('service_id')->constrained('services')->onDelete('cascade');
             $table->string('name');
             $table->float('quantity');
-            $table->decimal('price', 10, 2);
-            $table->timestamps();   
+            $table->decimal('subtotal', 10, 2);
+            $table->timestamps();
         });
     }
 

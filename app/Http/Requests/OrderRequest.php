@@ -27,27 +27,40 @@ class OrderRequest extends FormRequest
 
         if ($this->isMethod('post')) {
             $rules = [
-                // Order Number should not created on client
-                // 'order_number' => 'required|string|unique:orders,order_number',
-                'customer_id' => 'required|exists:customers,id',
-                'user_id' => 'required|exists:users,id',
-                'order_status' => ['required', new Enum(OrderStatus::class)],
-                'total_price'  => 'required|decimal:2|min:0',
-                'notes'        => 'nullable|string',
-                'pickup_date'  => 'nullable|date',
+                'order_status' => ['nullable', new Enum(OrderStatus::class)],
+                'notes'        => ['nullable', 'string'],
+                'pickup_date'  => ['nullable', 'date'],
+
+                // Customer as nested object
+                'customer'               => ['required', 'array'],
+                'customer.name'          => ['required', 'string', 'max:100'],
+                'customer.phone_number'  => ['required', 'string', 'max:20'],
+                'customer.address'       => ['nullable', 'string'],
+
+                // Order items
+                'items'                  => ['required', 'array', 'min:1'],
+                'items.*.service_id'     => ['required', 'exists:services,id'],
+                'items.*.name'           => ['required', 'string'],
+                'items.*.quantity'       => ['required', 'numeric', 'min:0.1'],
             ];
         }
 
         if ($this->isMethod('put') || $this->isMethod('patch')) {
             $rules = [
-                // Order Number should not be changed
-                // 'order_number' => 'sometimes|string|unique:orders,order_number,' . $this->order?->id,
-                'customer_id'  => 'sometimes|exists:customers,id',
-                'user_id'      => 'sometimes|exists:users,id',
                 'order_status' => ['sometimes', new Enum(OrderStatus::class)],
-                'total_price'  => 'sometimes|decimal:2|min:0',
-                'notes'        => 'sometimes|nullable|string',
-                'pickup_date'  => 'sometimes|nullable|date',
+                'notes'        => ['sometimes', 'nullable', 'string'],
+                'pickup_date'  => ['sometimes', 'nullable', 'date'],
+
+                'customer'               => ['sometimes', 'array'],
+                'customer.name'          => ['sometimes', 'required', 'string', 'max:100'],
+                'customer.phone_number'  => ['sometimes', 'required', 'string', 'max:20'],
+                'customer.address'       => ['sometimes', 'nullable', 'string'],
+
+                'items'                  => ['sometimes', 'array', 'min:1'],
+                'items.*.id'             => ['sometimes', 'integer', 'exists:order_items,id'],
+                'items.*.service_id'     => ['required_with:items', 'exists:services,id'],
+                'items.*.name'           => ['required_with:items', 'string'],
+                'items.*.quantity'       => ['required_with:items', 'numeric', 'min:0.1'],
             ];
         }
 

@@ -16,12 +16,10 @@ class OrderItemResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'order' => new OrderResource($this->whenLoaded('order')),
             'service' => new ServiceResource($this->whenLoaded('service')),
             'name' => $this->name,
             'quantity' => $this->quantity,
-            'price' => $this->price,
-            'created_at' => $this->created_at,
+            'subtotal'   => number_format($this->subtotal, 2, '.', ''),
         ];
     }
 }

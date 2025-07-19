@@ -14,11 +14,11 @@ class OrderItem extends Model
         'service_id',
         'name',
         'quantity',
-        'price',
+        'subtotal'
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
+        'subtotal' => 'decimal:2',
     ];
 
 
