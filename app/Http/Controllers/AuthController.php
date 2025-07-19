@@ -18,15 +18,8 @@ class AuthController extends Controller
      */
     public function register(AuthRequest $request)
     {
-        $validated = $request->validated();
 
-        $user = User::create([
-            'id'       => Str::uuid(),
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
-            'password' => $validated['password'],
-            'role'     => $validated['role'] ?? 'admin',
-        ]);
+        $user = User::create($request->validated());
 
         return ApiResponse::success(
             'User registered successfully.',
@@ -60,6 +53,20 @@ class AuthController extends Controller
                 'access_token' => $token,
                 'user' => new UserResource($user),
             ]
+        );
+    }
+
+    public function logout(AuthRequest $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return ApiResponse::success(
+            'Logout successful.',
+            null
         );
     }
 }
