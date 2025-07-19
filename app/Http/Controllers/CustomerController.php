@@ -20,14 +20,7 @@ class CustomerController extends Controller
     {
         Gate::authorize('viewAny', Customer::class);
 
-        $user = Auth::user();
-
-        // Super-admin: get all information, Admin: only get informations that they serves
-        $customers = $user->role === User::ROLE_SUPER_ADMIN
-            ? Customer::with('orders')->get()
-            : Customer::whereHas('orders', function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-            })->with('orders')->get();
+        $customers = Customer::with('orders')->get();
 
         return ApiResponse::success(
             'Customers retrieved successfully.',
@@ -49,15 +42,15 @@ class CustomerController extends Controller
      */
     public function store(CustomerRequest $request)
     {
-        Gate::authorize('create', Customer::class);
+        // Gate::authorize('create', Customer::class);
 
-        $customer = Customer::create($request->validated());
+        // $customer = Customer::create($request->validated());
 
-        return ApiResponse::success(
-            'Customer created.',
-            new CustomerResource($customer),
-            HttpResponse::HTTP_CREATED
-        );
+        // return ApiResponse::success(
+        //     'Customer created.',
+        //     new CustomerResource($customer),
+        //     HttpResponse::HTTP_CREATED
+        // );
     }
 
     /**
@@ -105,18 +98,11 @@ class CustomerController extends Controller
     {
         Gate::authorize('delete', $customer);
 
-        $customerDeletedData = [
-            'id' => $customer->id,
-            'name' => $customer->name,
-            'phone_number' => $customer->phone_number,
-            'address' => $customer->address,
-        ];
-
         $customer->delete();
 
         return ApiResponse::success(
             'Customer deleted.',
-            $customerDeletedData,
+            null,
             HttpResponse::HTTP_OK
         );
     }
