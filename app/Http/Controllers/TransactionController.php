@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Payment;
-use App\Http\Requests\StorePaymentRequest;
-use App\Http\Requests\UpdatePaymentRequest;
+use App\Http\Requests\TransactionRequest;
+use App\Models\Transaction;
 
 class TransactionController extends Controller
 {
@@ -27,7 +26,7 @@ class TransactionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePaymentRequest $request)
+    public function store(TransactionRequest $request)
     {
         //
     }
@@ -35,7 +34,7 @@ class TransactionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Payment $payment)
+    public function show(Transaction $transaction)
     {
         //
     }
@@ -43,7 +42,7 @@ class TransactionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Payment $payment)
+    public function edit(Transaction $transaction)
     {
         //
     }
@@ -51,7 +50,7 @@ class TransactionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePaymentRequest $request, Payment $payment)
+    public function update(TransactionRequest $request, Transaction $transaction)
     {
         //
     }
@@ -59,7 +58,7 @@ class TransactionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Payment $payment)
+    public function destroy(Transaction $transaction)
     {
         //
     }

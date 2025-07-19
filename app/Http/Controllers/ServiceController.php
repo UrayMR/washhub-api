@@ -97,19 +97,11 @@ class ServiceController extends Controller
     {
         Gate::authorize('delete', $service);
 
-        $serviceDeletedData = [
-            'id' => $service->id,
-            'name' => $service->name,
-            'price' => $service->price,
-            'unit' => $service->unit,
-            'status' => $service->status,
-        ];
-
         $service->delete();
 
         return ApiResponse::success(
             'Service deleted.',
-            $serviceDeletedData,
+            null,
             HttpResponse::HTTP_OK
         );
     }

@@ -75,17 +75,11 @@ class UserController extends Controller
     {
         Gate::authorize('delete', $user);
 
-        $userDeletedData = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'role' => $user->role,
-        ];
-
         $user->delete();
 
         return ApiResponse::success(
             'User deleted.',
-            $userDeletedData,
+            null,
             HttpResponse::HTTP_OK
         );
     }

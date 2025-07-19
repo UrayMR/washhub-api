@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\OrderItemRequest;
 use App\Models\OrderItem;
-use App\Http\Requests\StoreOrderItemRequest;
-use App\Http\Requests\UpdateOrderItemRequest;
 
 class OrderItemController extends Controller
 {
@@ -27,7 +26,7 @@ class OrderItemController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreOrderItemRequest $request)
+    public function store(OrderItemRequest $request)
     {
         //
     }
@@ -51,7 +50,7 @@ class OrderItemController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateOrderItemRequest $request, OrderItem $orderItem)
+    public function update(OrderItemRequest $request, OrderItem $orderItem)
     {
         //
     }
