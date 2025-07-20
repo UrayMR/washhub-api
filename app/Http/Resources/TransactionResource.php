@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin \App\Models\Transaction */
 class TransactionResource extends JsonResource
 {
     /**
@@ -22,7 +23,6 @@ class TransactionResource extends JsonResource
             'paidAmount' => $this->paid_amount,
             'paidAt' => $this->paid_at,
             'referenceNumber' => $this->reference_number,
-            'createdAt' => $this->created_at,
         ];
     }
 }

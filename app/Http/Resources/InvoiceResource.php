@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin \App\Models\Invoice */
 class InvoiceResource extends JsonResource
 {
     /**
@@ -20,8 +21,7 @@ class InvoiceResource extends JsonResource
             'order' => new OrderResource($this->whenLoaded('order')),
             'amount' => $this->amount,
             'status' => $this->status,
-            'issuedAt' => $this->issuedAt,
-            'createdAt' => $this->created_at,
+            'issuedAt' => $this->issued_at,
         ];
     }
 }
