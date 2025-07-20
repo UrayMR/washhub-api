@@ -6,7 +6,6 @@ use App\Http\Requests\AuthRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use App\Helpers\ApiResponse;
 use Illuminate\Validation\ValidationException;
@@ -56,13 +55,11 @@ class AuthController extends Controller
         );
     }
 
-    public function logout(AuthRequest $request)
+    public function logout()
     {
-        Auth::logout();
+        $user = Auth::user();
 
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
+        $user?->currentAccessToken()?->delete();
 
         return ApiResponse::success(
             'Logout successful.',
