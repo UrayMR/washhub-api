@@ -18,7 +18,7 @@ class ServiceResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'price' => $this->price,
+            'price' => number_format($this->price, 2, '.', ''),
             'unit' => $this->unit,
         ];
     }

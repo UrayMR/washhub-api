@@ -6,8 +6,6 @@ use App\Helpers\ApiResponse;
 use App\Http\Resources\CustomerResource;
 use App\Http\Requests\CustomerRequest;
 use App\Models\Customer;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 

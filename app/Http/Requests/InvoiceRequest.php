@@ -28,7 +28,8 @@ class InvoiceRequest extends FormRequest
                 // Invoice Number should not created on client
                 // 'invoice_number' => 'required|string|unique:invoices,invoice_number',
                 'order_id' => 'required|exists:orders,id',
-                'amount'  => 'required|decimal:2|min:0',
+                // Amount should not be created on client
+                // 'amount'  => 'required|decimal:2|min:0',
                 'issued_at'  => 'nullable|date',
                 'status' => 'required|in:unpaid,paid,cancelled',
             ];
@@ -39,7 +40,8 @@ class InvoiceRequest extends FormRequest
                 // Invoice Number should not be changed
                 // 'invoice_number' => 'sometimes|string|unique:invoices,invoice_number,' . $this->invoice?->id,
                 'order_id' => 'sometimes|exists:orders,id',
-                'amount'  => 'sometimes|decimal:2|min:0',
+                // Amount should not be changed
+                // 'amount'  => 'sometimes|decimal:2|min:0',
                 'issued_at'  => 'sometimes|nullable|date',
                 'status' => 'sometimes|in:unpaid,paid,cancelled',
             ];
