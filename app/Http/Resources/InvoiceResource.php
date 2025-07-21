@@ -18,8 +18,17 @@ class InvoiceResource extends JsonResource
         return [
             'id' => $this->id,
             'invoiceNumber' => $this->invoice_number,
-            'order' => new OrderResource($this->whenLoaded('order')),
-            'amount' => $this->amount,
+            'order' => $this->whenLoaded('order', function () {
+                $customer = $this->order->customer;
+                return [
+                    'id' => $this->order->id,
+                    'orderNumber' => $this->order->order_number,
+                    'customerName' => $customer?->name,
+                    'customerAddress' => $customer?->address,
+                    'pickupDate' => $this->order->pickup_date,
+                ];
+            }),
+            'amount' => number_format($this->amount, 2, '.', ''),,
             'status' => $this->status,
             'issuedAt' => $this->issued_at,
         ];
