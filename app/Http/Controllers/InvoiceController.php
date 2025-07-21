@@ -60,7 +60,6 @@ class InvoiceController extends Controller
             return $item->quantity * $item->service->price;
         });
 
-        // Buat invoice dalam transaksi
         $invoice = DB::transaction(function () use ($validated, $amount) {
             return Invoice::create([
                 'order_id' => $validated['order_id'],

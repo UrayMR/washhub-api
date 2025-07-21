@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TransactionRequest;
+use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
+use Illuminate\Support\Facades\Gate;
 
 class TransactionController extends Controller
 {
@@ -12,7 +14,14 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        //
+        Gate::authorize('viewAny', Transaction::class);
+
+        $transactions = Transaction::with('invoice.order.customer')->latest()->get();
+
+        return ApiResponse::success(
+            'Transactions retrieved successfully.',
+            TransactionResource::collection($transactions)
+        );
     }
 
     /**
@@ -28,7 +37,32 @@ class TransactionController extends Controller
      */
     public function store(TransactionRequest $request)
     {
-        //
+        Gate::authorize('create', Transaction::class);
+
+        $validated = $request->validated();
+
+        // Cek jika transaksi untuk invoice sudah ada
+        if (Transaction::where('invoice_id', $validated['invoice_id'])->exists()) {
+            return \App\Helpers\ApiResponse::error(
+                'Transaction for this invoice already exists.',
+                null,
+                422
+            );
+        }
+
+        $transaction = Transaction::create([
+            'invoice_id' => $validated['invoice_id'],
+            'payment_method' => $validated['payment_method'],
+            'paid_amount' => $validated['paid_amount'],
+            'paid_at' => $validated['paid_at'] ?? now(),
+            'reference_number' => $validated['reference_number'] ?? null,
+        ]);
+
+        return ApiResponse::success(
+            'Transaction created successfully.',
+            new TransactionResource($transaction->load('invoice.order.customer')),
+            201
+        );
     }
 
     /**
@@ -36,7 +70,12 @@ class TransactionController extends Controller
      */
     public function show(Transaction $transaction)
     {
-        //
+        Gate::authorize('view', $transaction);
+        $transaction->load('invoice.order.customer');
+        return \App\Helpers\ApiResponse::success(
+            'Transaction retrieved.',
+            new TransactionResource($transaction)
+        );
     }
 
     /**
@@ -52,7 +91,12 @@ class TransactionController extends Controller
      */
     public function update(TransactionRequest $request, Transaction $transaction)
     {
-        //
+        Gate::authorize('update', $transaction);
+        $transaction->update($request->validated());
+        return \App\Helpers\ApiResponse::success(
+            'Transaction updated.',
+            new TransactionResource($transaction->load('invoice.order.customer'))
+        );
     }
 
     /**
@@ -60,6 +104,13 @@ class TransactionController extends Controller
      */
     public function destroy(Transaction $transaction)
     {
-        //
+        Gate::authorize('delete', $transaction);
+        
+        $transaction->delete();
+
+        return ApiResponse::success(
+            'Transaction deleted.',
+            null
+        );
     }
 }
