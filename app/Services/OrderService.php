@@ -17,6 +17,8 @@ class OrderService
     {
         return DB::transaction(function () use ($validated, $user) {
             // Create or find customer
+
+            /** @var \App\Models\Customer $customer */
             $customer = Customer::firstOrCreate(
                 ['phone_number' => $validated['customer']['phone_number']],
                 [
@@ -38,10 +40,12 @@ class OrderService
             // Process items
             $total = 0;
             foreach ($validated['items'] as $item) {
+                /** @var \App\Models\Service $service */
                 $service = Service::findOrFail($item['service_id']);
                 $subtotal = $service->price * $item['quantity'];
 
-                $order->items()->create([
+                /** @var \App\Models\OrderItem $orderItem */
+                $orderItem = $order->items()->create([
                     'service_id' => $service->id,
                     'name'       => $item['name'],
                     'quantity'   => $item['quantity'],
@@ -86,9 +90,11 @@ class OrderService
                 $total = 0;
 
                 foreach ($validated['items'] as $item) {
+                    /** @var \App\Models\Service $service */
                     $service = Service::findOrFail($item['service_id']);
                     $subtotal = $service->price * $item['quantity'];
 
+                    /** @var \App\Models\OrderItem $orderItem */
                     $orderItem = $order->items()->updateOrCreate(
                         ['id' => $item['id'] ?? null],
                         [
