@@ -11,6 +11,16 @@ use Illuminate\Support\Facades\DB;
 class OrderService
 {
     /**
+     * Calculate total price for an order.
+     */
+    public function calculateTotalPrice(Order $order): int
+    {
+        return $order->items->sum(function ($item) {
+            return $item->subtotal;
+        });
+    }
+
+    /**
      * Store a new Order along with its Customer and OrderItems.
      */
     public function store(array $validated, $user): Order
@@ -38,7 +48,6 @@ class OrderService
             ]);
 
             // Process items
-            $total = 0;
             foreach ($validated['items'] as $item) {
                 /** @var \App\Models\Service $service */
                 $service = Service::findOrFail($item['service_id']);
@@ -51,11 +60,10 @@ class OrderService
                     'quantity'   => $item['quantity'],
                     'subtotal'   => $subtotal,
                 ]);
-
-                $total += $subtotal;
             }
 
-            $order->update(['total_price' => $total]);
+            // Use calculateTotalPrice for DRY
+            $order->update(['total_price' => $this->calculateTotalPrice($order)]);
 
             return $order;
         });
@@ -87,8 +95,6 @@ class OrderService
             if (isset($validated['items'])) {
                 $existingIds = [];
 
-                $total = 0;
-
                 foreach ($validated['items'] as $item) {
                     /** @var \App\Models\Service $service */
                     $service = Service::findOrFail($item['service_id']);
@@ -106,13 +112,13 @@ class OrderService
                     );
 
                     $existingIds[] = $orderItem->id;
-                    $total += $subtotal;
                 }
 
                 // Delete items that were removed on the client side
                 $order->items()->whereNotIn('id', $existingIds)->delete();
 
-                $order->update(['total_price' => $total]);
+                // Use calculateTotalPrice for DRY
+                $order->update(['total_price' => $this->calculateTotalPrice($order)]);
             }
 
             return $order;

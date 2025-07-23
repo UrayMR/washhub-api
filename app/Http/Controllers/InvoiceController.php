@@ -11,8 +11,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
+use App\Services\InvoiceService;
+
 class InvoiceController extends Controller
 {
+    public function __construct(protected InvoiceService $invoiceService) {}
     /**
      * Display a listing of the resource.
      */
@@ -55,10 +58,9 @@ class InvoiceController extends Controller
             );
         }
 
+
         $order = Order::with('items.service')->findOrFail($validated['order_id']);
-        $amount = $order->items->sum(function ($item) {
-            return $item->quantity * $item->service->price;
-        });
+        $amount = $this->invoiceService->calculateAmount($order);
 
         $invoice = DB::transaction(function () use ($validated, $amount) {
             return Invoice::create([
