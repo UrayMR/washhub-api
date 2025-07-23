@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\OrderStatus;
 use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -24,7 +25,7 @@ class OrderFactory extends Factory
         return [
             'customer_id' => $customer->id,
             'user_id'     => $user->id,
-            'order_status' => $this->faker->randomElement(['pending', 'processing', 'done', 'canceled']),
+            'order_status' => $this->faker->randomElement(OrderStatus::cases()),
             'total_price' => $this->faker->randomFloat(2, 10000, 500000),
             'notes'       => $this->faker->optional()->sentence(),
             'pickup_date' => $this->faker->optional()->dateTimeBetween('now', '+5 days'),

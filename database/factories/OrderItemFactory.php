@@ -18,22 +18,23 @@ class OrderItemFactory extends Factory
      */
     public function definition(): array
     {
-        $service = Service::inRandomOrder()->first() ?? Service::factory()->create();
+        // Gunakan service yang sudah ada jika diberikan lewat state, jika tidak, buat baru
+        $service = $this->state['service'] ?? (Service::inRandomOrder()->first() ?? Service::factory()->create());
 
         // Qty value by their unit
         $quantity = $service->unit === 'pcs'
-            ? $this->faker->numberBetween(1, 20) // pcs
-            : $this->faker->randomFloat(1, 0.5, 10); // kg
+            ? (int) ($this->state['quantity'] ?? $this->faker->numberBetween(1, 20))
+            : ($this->state['quantity'] ?? $this->faker->randomFloat(1, 0.5, 10));
 
         // Counting service price times the qty
-        $totalPrice = round($service->price * $quantity, 2);
+        $subtotal = round($service->price * $quantity, 2);
 
         return [
-            'order_id' => Order::factory(),
+            'order_id' => $this->state['order_id'] ?? Order::factory(),
             'service_id' => $service->id,
             'name' => $service->name,
             'quantity' => $quantity,
-            'price' => $totalPrice,
+            'subtotal' => $subtotal,
         ];
     }
 }
