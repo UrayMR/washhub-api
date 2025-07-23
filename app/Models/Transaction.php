@@ -51,8 +51,8 @@ class Transaction extends Model
         'paid_at' => 'datetime'
     ];
 
-    protected string $code_prefix = 'TRX';
-    protected string $code_field = 'transaction_number';
+    protected string $number_prefix = 'TRX';
+    protected string $number_field = 'transaction_number';
 
     public function invoice()
     {

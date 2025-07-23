@@ -49,8 +49,8 @@ class Invoice extends Model
         'issued_at' => 'date'
     ];
 
-    protected string $code_prefix = 'INV';
-    protected string $code_field = 'invoice_number';
+    protected string $number_prefix = 'INV';
+    protected string $number_field = 'invoice_number';
 
     public function order()
     {

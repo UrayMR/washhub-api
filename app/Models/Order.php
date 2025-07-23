@@ -60,8 +60,8 @@ class Order extends Model
         'total_price' => 'decimal:2',
     ];
 
-    protected string $code_prefix = 'ORD';
-    protected string $code_field = 'order_number';
+    protected string $number_prefix = 'ORD';
+    protected string $number_field = 'order_number';
 
     public function customer()
     {

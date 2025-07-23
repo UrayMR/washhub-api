@@ -2,11 +2,9 @@
 
 namespace App\Traits;
 
-use Number;
-
 trait AutoGenerateNumber
 {
-    public static function bootAutoGenerateCode(): void
+    public static function bootAutoGenerateNumber(): void
     {
         static::creating(function ($model) {
             // Takes number prefix and field from model that has been defined
