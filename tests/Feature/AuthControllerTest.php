@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
@@ -125,5 +126,35 @@ class AuthControllerTest extends TestCase
                 'message' => 'Validation failed.',
             ])
             ->assertJsonValidationErrors(['email']);
+    }
+
+    public function test_super_admin_can_logout_successfully()
+    {
+        // Buat user super-admin
+        $superAdmin = User::factory()->create([
+            'password' => bcrypt('supersecret123'),
+            'role' => 'super-admin',
+        ]);
+
+        // Login dan ambil access token
+        $loginResponse = $this->postJson('/api/login', [
+            'email' => $superAdmin->email,
+            'password' => 'supersecret123',
+        ]);
+
+        $loginResponse->assertOk();
+
+        $accessToken = $loginResponse->json('data.access_token');
+
+        // Kirim logout dengan token di header
+        $logoutResponse = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $accessToken,
+        ])->postJson('/api/logout');
+
+        $logoutResponse->assertOk()
+            ->assertJson([
+                'status' => true,
+                'message' => 'Logout successfull.',
+            ]);
     }
 }

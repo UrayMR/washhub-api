@@ -62,7 +62,7 @@ class AuthController extends Controller
         $user?->currentAccessToken()?->delete();
 
         return ApiResponse::success(
-            'Logout successful.',
+            'Logout successfull.',
             null
         );
     }
