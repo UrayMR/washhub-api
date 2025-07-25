@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $user_id
  * @property OrderStatus $order_status
  * @property numeric $total_price
- * @property string|null $notes
+ * @property string|null $note
  * @property \Illuminate\Support\Carbon|null $pickup_date
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -30,7 +30,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereCustomerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereNote($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereOrderNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereOrderStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order wherePickupDate($value)
@@ -50,7 +50,7 @@ class Order extends Model
         'user_id',
         'order_status',
         'total_price',
-        'notes',
+        'note',
         'pickup_date',
     ];
 

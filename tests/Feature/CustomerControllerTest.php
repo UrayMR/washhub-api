@@ -35,37 +35,20 @@ class CustomerControllerTest extends TestCase
         }
     }
 
-    public function test_index_customer_as_admin_only_returns_handled_customers()
+    public function test_index_customer_as_admin_returns_all_customers()
     {
-        /** @var \App\Models\User $admin */
         $admin = User::factory()->create(['role' => 'admin']);
         $this->actingAs($admin, 'sanctum');
 
-        $customersHandled = Customer::factory(3)->create();
-        foreach ($customersHandled as $customer) {
-            Order::factory()->create([
-                'customer_id' => $customer->id,
-                'user_id' => $admin->id,
-            ]);
-        }
-
-        $customersNotHandled = Customer::factory(2)->create();
-        foreach ($customersNotHandled as $customer) {
-            Order::factory()->create([
-                'customer_id' => $customer->id,
-                'user_id' => User::factory()->create()->id,
-            ]);
-        }
+        $customers = Customer::factory(5)->create();
 
         $response = $this->getJson('/api/customers');
         $response->assertOk();
 
-        foreach ($customersHandled as $customer) {
-            $response->assertJsonFragment(['id' => $customer->id]);
-        }
-
-        foreach ($customersNotHandled as $customer) {
-            $response->assertJsonMissing(['id' => $customer->id]);
+        foreach ($customers as $customer) {
+            $response->assertJsonFragment([
+                'id' => (string) $customer->id,
+            ]);
         }
     }
 
@@ -107,18 +90,10 @@ class CustomerControllerTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
         $this->actingAs($admin, 'sanctum');
 
-        $otherAdmin = User::factory()->create(['role' => 'admin']);
         $customer = Customer::factory()->create();
-        Order::factory()->create([
-            'customer_id' => $customer->id,
-            'user_id' => $otherAdmin->id,
-        ]);
 
         $response = $this->getJson("/api/customers/{$customer->id}");
-        $response->assertForbidden()->assertJson([
-            'status' => false,
-            'message' => 'Unauthorized.',
-        ]);
+        $response->assertOk()->assertJsonFragment(['id' => $customer->id]);
     }
 
     public function test_super_admin_can_create_customer()

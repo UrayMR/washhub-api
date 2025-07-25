@@ -19,11 +19,11 @@ class ServiceController extends Controller
     {
         Gate::authorize('viewAny', Service::class);
 
-        $services = ServiceResource::collection(Service::all());
+        $services = Service::all();
 
         return ApiResponse::success(
             'Services retrieved successfully.',
-            $services,
+            ServiceResource::collection($services),
             HttpResponse::HTTP_OK
         );
     }

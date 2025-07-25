@@ -18,7 +18,7 @@ class CustomerController extends Controller
     {
         Gate::authorize('viewAny', Customer::class);
 
-        $customers = Customer::with('orders')->get();
+        $customers = Customer::all();
 
         return ApiResponse::success(
             'Customers retrieved successfully.',
@@ -49,6 +49,12 @@ class CustomerController extends Controller
         //     new CustomerResource($customer),
         //     HttpResponse::HTTP_CREATED
         // );
+
+        return ApiResponse::error(
+            'Customer creation are not allowed without order association.',
+            null,
+            HttpResponse::HTTP_NOT_IMPLEMENTED
+        );
     }
 
     /**

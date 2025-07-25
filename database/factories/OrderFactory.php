@@ -27,7 +27,7 @@ class OrderFactory extends Factory
             'user_id'     => $user->id,
             'order_status' => $this->faker->randomElement(OrderStatus::cases()),
             'total_price' => $this->faker->randomFloat(2, 10000, 500000),
-            'notes'       => $this->faker->optional()->sentence(),
+            'note'       => $this->faker->optional()->sentence(),
             'pickup_date' => $this->faker->optional()->dateTimeBetween('now', '+5 days'),
         ];
     }

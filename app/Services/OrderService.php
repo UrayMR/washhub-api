@@ -42,7 +42,7 @@ class OrderService
                 'customer_id' => $customer->id,
                 'user_id' => $user->id,
                 'order_status' => $validated['order_status'] ?? OrderStatus::pending,
-                'notes' => $validated['notes'] ?? null,
+                'note' => $validated['note'] ?? null,
                 'pickup_date' => $validated['pickup_date'] ?? null,
                 'total_price' => 0, // placeholder
             ]);
@@ -87,7 +87,7 @@ class OrderService
             // Update order fields
             $order->update([
                 'order_status' => $validated['order_status'] ?? $order->order_status,
-                'notes'        => $validated['notes'] ?? $order->notes,
+                'note'        => $validated['note'] ?? $order->note,
                 'pickup_date'  => $validated['pickup_date'] ?? $order->pickup_date,
             ]);
 

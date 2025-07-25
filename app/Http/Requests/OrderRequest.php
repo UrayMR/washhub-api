@@ -28,7 +28,7 @@ class OrderRequest extends FormRequest
         if ($this->isMethod('post')) {
             $rules = [
                 'order_status' => ['nullable', new Enum(OrderStatus::class)],
-                'notes'        => ['nullable', 'string'],
+                'note'        => ['nullable', 'string'],
                 'pickup_date'  => ['nullable', 'date'],
 
                 // Customer as nested object
@@ -48,7 +48,7 @@ class OrderRequest extends FormRequest
         if ($this->isMethod('put') || $this->isMethod('patch')) {
             $rules = [
                 'order_status' => ['sometimes', new Enum(OrderStatus::class)],
-                'notes'        => ['sometimes', 'nullable', 'string'],
+                'note'        => ['sometimes', 'nullable', 'string'],
                 'pickup_date'  => ['sometimes', 'nullable', 'date'],
 
                 'customer'               => ['sometimes', 'array'],

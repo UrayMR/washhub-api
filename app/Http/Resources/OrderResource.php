@@ -14,7 +14,7 @@ class OrderResource extends JsonResource
             'id'           => $this->id,
             'order_number' => $this->order_number,
             'order_status' => $this->order_status,
-            'notes'        => $this->notes,
+            'note'        => $this->note,
             'pickup_date'  => $this->pickup_date?->format('Y-m-d'),
             'total_price'  => number_format($this->total_price, 2, '.', ''),
 

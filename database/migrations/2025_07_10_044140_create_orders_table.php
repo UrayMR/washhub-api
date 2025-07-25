@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
             $table->enum('order_status', ['pending', 'processing', 'completed', 'delivering', 'delivered', 'cancelled', 'picked'])->default('pending');
             $table->decimal('total_price', 10, 2);
-            $table->text('notes')->nullable();
+            $table->text('note')->nullable();
             $table->date('pickup_date')->nullable();
             $table->timestamps();
         });
