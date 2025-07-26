@@ -6,6 +6,7 @@ use App\Helpers\ApiResponse;
 use App\Http\Requests\InvoiceRequest;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
+use App\Models\Order;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -57,7 +58,6 @@ class InvoiceController extends Controller
                 HttpResponse::HTTP_UNPROCESSABLE_ENTITY
             );
         }
-
 
         $order = Order::with('items.service')->findOrFail($validated['order_id']);
         $amount = $this->invoiceService->calculateAmount($order);

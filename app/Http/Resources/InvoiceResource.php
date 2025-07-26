@@ -28,7 +28,7 @@ class InvoiceResource extends JsonResource
                     'pickupDate' => $this->order->pickup_date,
                 ];
             }),
-            'amount' => number_format($this->amount, 2, '.', ''),,
+            'amount' => number_format($this->amount, 2, '.', ''),
             'status' => $this->status,
             'issuedAt' => $this->issued_at,
         ];

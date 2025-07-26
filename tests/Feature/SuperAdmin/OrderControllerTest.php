@@ -7,7 +7,6 @@ use App\Models\Order;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Arr;
 use Tests\TestCase;
 
 class OrderControllerTest extends TestCase
