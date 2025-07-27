@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ApiResponse;
 use App\Http\Requests\TransactionRequest;
 use App\Http\Resources\TransactionResource;
+use App\Models\Invoice;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Gate;
 
@@ -41,19 +43,20 @@ class TransactionController extends Controller
 
         $validated = $request->validated();
 
-        // Cek jika transaksi untuk invoice sudah ada
         if (Transaction::where('invoice_id', $validated['invoice_id'])->exists()) {
-            return \App\Helpers\ApiResponse::error(
+            return ApiResponse::error(
                 'Transaction for this invoice already exists.',
                 null,
                 422
             );
         }
 
+        $invoice = Invoice::findOrFail($validated['invoice_id']);
+
         $transaction = Transaction::create([
-            'invoice_id' => $validated['invoice_id'],
+            'invoice_id' => $invoice->id,
             'payment_method' => $validated['payment_method'],
-            'paid_amount' => $validated['paid_amount'],
+            'paid_amount' => $invoice->amount,
             'paid_at' => $validated['paid_at'] ?? now(),
             'reference_number' => $validated['reference_number'] ?? null,
         ]);
@@ -65,6 +68,7 @@ class TransactionController extends Controller
         );
     }
 
+
     /**
      * Display the specified resource.
      */
@@ -72,7 +76,7 @@ class TransactionController extends Controller
     {
         Gate::authorize('view', $transaction);
         $transaction->load('invoice.order.customer');
-        return \App\Helpers\ApiResponse::success(
+        return ApiResponse::success(
             'Transaction retrieved.',
             new TransactionResource($transaction)
         );
@@ -93,7 +97,7 @@ class TransactionController extends Controller
     {
         Gate::authorize('update', $transaction);
         $transaction->update($request->validated());
-        return \App\Helpers\ApiResponse::success(
+        return ApiResponse::success(
             'Transaction updated.',
             new TransactionResource($transaction->load('invoice.order.customer'))
         );
@@ -105,7 +109,7 @@ class TransactionController extends Controller
     public function destroy(Transaction $transaction)
     {
         Gate::authorize('delete', $transaction);
-        
+
         $transaction->delete();
 
         return ApiResponse::success(

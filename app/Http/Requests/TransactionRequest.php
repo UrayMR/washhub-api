@@ -28,8 +28,9 @@ class TransactionRequest extends FormRequest
                 // Transaction Number should not created on client
                 // 'transaction_number' => 'required|string|unique:transactions,transaction_number',
                 'invoice_id' => 'required|exists:invoices,id',
-                'payment_method' => 'required|in:unpaid,paid,cancelled',
-                'paid_amount'  => 'required|decimal:2|min:0',
+                'payment_method' => 'required|in:cash,transfer,qris',
+                // Will be taken from invoice
+                // 'paid_amount'  => 'required|decimal:2|min:0',
                 'paid_at'  => 'nullable|date',
                 'reference_number'  => 'nullable|string|max:255',
             ];
@@ -40,8 +41,9 @@ class TransactionRequest extends FormRequest
                 // Transaction Number should not be changed
                 // 'transaction_number' => 'sometimes|string|unique:transactions,transaction_number,' . $this->transaction?->id,
                 'invoice_id' => 'sometimes|exists:invoices,id',
-                'payment_method' => 'sometimes|in:unpaid,paid,cancelled',
-                'paid_amount'  => 'sometimes|decimal:2|min:0',
+                'payment_method' => 'sometimes|in:cash,transfer,qris',
+                // Cannot be changed, will be taken from invoice
+                // 'paid_amount'  => 'sometimes|decimal:2|min:0',
                 'paid_at'  => 'sometimes|nullable|date',
                 'reference_number'  => 'sometimes|nullable|string|max:255',
             ];
