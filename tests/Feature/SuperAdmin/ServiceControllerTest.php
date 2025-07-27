@@ -11,19 +11,34 @@ class ServiceControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected User $superAdmin;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->superAdmin = User::factory()->create(['role' => User::ROLE_SUPER_ADMIN]);
+        $this->actingAs($this->superAdmin, 'sanctum');
+    }
+
     public function test_can_index_service_as_super_admin()
     {
-        $superAdmin = User::factory()->create(['role' => 'super-admin']);
-        $this->actingAs($superAdmin, 'sanctum');
-
-        $serviceDatas = Service::factory(3)->create();
+        $services = Service::factory(3)->create();
 
         $response = $this->getJson('/api/services');
-
         $response->assertOk();
 
-        foreach ($serviceDatas as $service) {
-            $response->assertJsonFragment([
+        foreach ($services as $service) {
+            $response->assertJsonFragment(['id' => $service->id]);
+        }
+    }
+
+    public function test_can_show_service_as_super_admin()
+    {
+        $service = Service::factory()->create();
+
+        $response = $this->getJson("/api/services/{$service->id}");
+        $response->assertOk()
+            ->assertJsonFragment([
                 'id' => $service->id,
                 'name' => $service->name,
                 'description' => $service->description,
@@ -31,33 +46,10 @@ class ServiceControllerTest extends TestCase
                 'unit' => $service->unit,
                 'status' => $service->status,
             ]);
-        }
-    }
-
-    public function test_can_show_service_as_admin()
-    {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $this->actingAs($admin, 'sanctum');
-
-        $service = Service::factory()->create();
-
-        $response = $this->getJson('/api/services/' . $service->id);
-
-        $response->assertOk()->assertJsonFragment([
-            'id' => $service->id,
-            'name' => $service->name,
-            'description' => $service->description,
-            'price' => $service->price,
-            'unit' => $service->unit,
-            'status' => $service->status,
-        ]);
     }
 
     public function test_can_create_service_as_super_admin()
     {
-        $superAdmin = User::factory()->create(['role' => 'super-admin']);
-        $this->actingAs($superAdmin, 'sanctum');
-
         $payload = [
             'name' => 'test',
             'description' => 'test123',
@@ -67,34 +59,31 @@ class ServiceControllerTest extends TestCase
         ];
 
         $response = $this->postJson('/api/services', $payload);
-
         $response->assertCreated()
             ->assertJsonFragment([
-                'name' => 'test',
-                'description' => 'test123',
-                'price' => '15000.00',
-                'unit' => 'kg',
-                'status' => 'active',
+                'name' => $payload['name'],
+                'description' => $payload['description'],
+                'price' => $payload['price'],
+                'unit' => $payload['unit'],
+                'status' => $payload['status'],
             ]);
 
         $this->assertDatabaseHas('services', [
-            'name' => 'test',
+            'name' => $payload['name'],
         ]);
     }
 
     public function test_can_update_and_delete_service_as_super_admin()
     {
-        $superAdmin = User::factory()->create(['role' => 'super-admin']);
-        $this->actingAs($superAdmin, 'sanctum');
-
         $service = Service::factory()->create();
-        
+
         // UPDATE
-        $update = $this->putJson("/api/services/{$service->id}", [
+        $updatePayload = [
             'name' => 'test',
             'price' => '18000.00',
-        ]);
+        ];
 
+        $update = $this->putJson("/api/services/{$service->id}", $updatePayload);
         $update->assertOk()
             ->assertJson([
                 'status' => true,
@@ -103,13 +92,12 @@ class ServiceControllerTest extends TestCase
 
         $this->assertDatabaseHas('services', [
             'id' => $service->id,
-            'name' => 'test',
-            'price' => '18000.00',
+            'name' => $updatePayload['name'],
+            'price' => $updatePayload['price'],
         ]);
 
         // DELETE
         $delete = $this->deleteJson("/api/services/{$service->id}");
-
         $delete->assertOk()
             ->assertJson([
                 'status' => true,

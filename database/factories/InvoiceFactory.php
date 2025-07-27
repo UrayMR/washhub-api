@@ -21,7 +21,7 @@ class InvoiceFactory extends Factory
 
         return [
             'order_id' => $order->id,
-            'amount' => $this->faker->randomFloat(2, 10000, 200000),
+            'amount' => $order->total_price,
             'issued_at' => now(),
             'status' => $this->faker->randomElement(['unpaid', 'paid', 'cancelled']),
         ];
