@@ -12,11 +12,17 @@ class CustomerControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected User $admin;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
+        $this->actingAs($this->admin, 'sanctum');
+    }
+
     public function test_can_index_customer_as_admin()
     {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $this->actingAs($admin, 'sanctum');
-
         $customers = Customer::factory()->count(3)->make();
 
         foreach ($customers as $customer) {
@@ -39,9 +45,6 @@ class CustomerControllerTest extends TestCase
 
     public function test_can_show_customer_as_admin()
     {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $this->actingAs($admin, 'sanctum');
-
         $customer = Customer::factory()->create();
         Order::factory()->create([
             'customer_id' => $customer->id,
@@ -54,10 +57,6 @@ class CustomerControllerTest extends TestCase
 
     public function test_cannot_create_customer_as_admin()
     {
-        /** @var \App\Models\User $admin */
-        $admin = User::factory()->create(['role' => 'admin']);
-        $this->actingAs($admin, 'sanctum');
-
         $payload = [
             'name' => 'Super Pelanggan',
             'phone_number' => '089812345678',
@@ -70,9 +69,6 @@ class CustomerControllerTest extends TestCase
 
     public function test_can_update_and_cannot_delete_customer_as_admin()
     {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $this->actingAs($admin, 'sanctum');
-
         $customer = Customer::factory()->create();
 
         $update = $this->putJson("/api/customers/{$customer->id}", [

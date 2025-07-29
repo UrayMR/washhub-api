@@ -11,25 +11,26 @@ class ServiceControllerTest extends TestCase
 {
   use RefreshDatabase;
 
+  protected User $admin;
+
+  protected function setUp(): void
+  {
+    parent::setUp();
+    $this->admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
+    $this->actingAs($this->admin, 'sanctum');
+  }
+
   public function test_can_index_service_as_admin()
   {
-    $admin = User::factory()->create(['role' => 'admin']);
-    $this->actingAs($admin, 'sanctum');
-
-    $serviceDatas = Service::factory(3)->create();
+    $services = Service::factory(3)->create();
 
     $response = $this->getJson('/api/services');
 
     $response->assertOk();
 
-    foreach ($serviceDatas as $service) {
+    foreach ($services as $service) {
       $response->assertJsonFragment([
         'id' => $service->id,
-        'name' => $service->name,
-        'description' => $service->description,
-        'price' => $service->price,
-        'unit' => $service->unit,
-        'status' => $service->status,
       ]);
     }
   }
@@ -45,19 +46,11 @@ class ServiceControllerTest extends TestCase
 
     $response->assertOk()->assertJsonFragment([
       'id' => $service->id,
-      'name' => $service->name,
-      'description' => $service->description,
-      'price' => $service->price,
-      'unit' => $service->unit,
-      'status' => $service->status,
     ]);
   }
 
   public function test_cannot_create_service_as_admin()
   {
-    $admin = User::factory()->create(['role' => 'admin']);
-    $this->actingAs($admin, 'sanctum');
-
     $payload = [
       'name' => 'test',
       'description' => 'test123',

@@ -14,12 +14,18 @@ class OrderControllerTest extends TestCase
 {
   use RefreshDatabase;
 
+  protected User $admin;
+
+  protected function setUp(): void
+  {
+    parent::setUp();
+    $this->admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
+    $this->actingAs($this->admin, 'sanctum');
+  }
+
   public function test_can_index_their_order_and_cannot_index_other_user_order_as_admin(): void
   {
-    $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
-    $this->actingAs($admin, 'sanctum');
-
-    $ownOrders = Order::factory(3)->create(['user_id' => $admin->id]);
+    $ownOrders = Order::factory(3)->create(['user_id' => $this->admin->id]);
 
     $otherUser = User::factory()->create();
     $otherOrders = Order::factory(2)->create(['user_id' => $otherUser->id]);
@@ -48,10 +54,7 @@ class OrderControllerTest extends TestCase
 
   public function test_can_show_their_order_and_cannot_show_other_user_order_as_admin()
   {
-    $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
-    $this->actingAs($admin, 'sanctum');
-
-    $ownOrder = Order::factory()->create(['user_id' => $admin->id]);
+    $ownOrder = Order::factory()->create(['user_id' => $this->admin->id]);
 
     $ownResponse = $this->getJson('/api/orders/' . $ownOrder->id);
     $ownResponse->assertOk()->assertJsonFragment([
@@ -68,10 +71,6 @@ class OrderControllerTest extends TestCase
 
   public function test_can_create_order_with_customer_and_items_as_admin(): void
   {
-    // Authenticate as super admin
-    $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
-    $this->actingAs($admin, 'sanctum');
-
     // Prepare customer data without saving to the database
     $customerData = Customer::factory()->make()->toArray();
 
@@ -135,10 +134,7 @@ class OrderControllerTest extends TestCase
 
   public function test_can_update_their_order_with_items_and_customer_as_admin(): void
   {
-    $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
-    $this->actingAs($admin, 'sanctum');
-
-    $order = Order::factory()->create(['user_id' => $admin->id]);
+    $order = Order::factory()->create(['user_id' => $this->admin->id]);
     $customer = $order->customer;
 
     $newCustomerData = [
@@ -190,12 +186,8 @@ class OrderControllerTest extends TestCase
 
   public function test_cannot_update_other_user_order_with_items_and_customer_as_admin(): void
   {
-    $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
-    $this->actingAs($admin, 'sanctum');
-
     $otherUser = User::factory()->create();
     $order = Order::factory()->create(['user_id' => $otherUser->id]);
-    $customer = $order->customer;
 
     $newCustomerData = [
       'name' => 'Updated Customer',
@@ -227,10 +219,7 @@ class OrderControllerTest extends TestCase
 
   public function test_can_delete_their_order_as_admin(): void
   {
-    $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
-    $this->actingAs($admin, 'sanctum');
-
-    $order = Order::factory()->create(['user_id' => $admin->id]);
+    $order = Order::factory()->create(['user_id' => $this->admin->id]);
 
     $response = $this->deleteJson("/api/orders/{$order->id}");
 

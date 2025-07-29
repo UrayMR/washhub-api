@@ -17,7 +17,7 @@ class InvoiceControllerTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    $this->superAdmin = User::factory()->create(['role' => 'super-admin']);
+    $this->superAdmin = User::factory()->create(['role' => User::ROLE_SUPER_ADMIN]);
     $this->actingAs($this->superAdmin, 'sanctum');
   }
 

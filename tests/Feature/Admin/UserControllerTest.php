@@ -10,10 +10,18 @@ class UserControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected User $admin;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
+        $this->actingAs($this->admin, 'sanctum');
+    }
+
     public function test_cannot_index_user_as_admin()
     {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $this->actingAs($admin, 'sanctum');
+        User::factory(5)->create(['role' => User::ROLE_ADMIN]);
 
         $response = $this->getJson('/api/users');
 
@@ -22,9 +30,6 @@ class UserControllerTest extends TestCase
 
     public function test_cannot_show_user_as_admin()
     {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $this->actingAs($admin, 'sanctum');
-
         $otherAdmin = User::factory()->create(['role' => 'admin']);
 
         $response = $this->getJson("/api/users/{$otherAdmin->id}");
@@ -34,15 +39,12 @@ class UserControllerTest extends TestCase
 
     public function test_cannot_create_user_as_admin()
     {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $this->actingAs($admin, 'sanctum');
-
         $payload = [
             'name' => 'test',
             'email' => 'test@example.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
-            'role' => 'admin',
+            'role' => User::ROLE_ADMIN,
         ];
 
         $response = $this->postJson('/api/users', $payload);
